@@ -1,0 +1,89 @@
+version: "3"
+
+services:
+  mariadb:
+    image: wodby/mariadb:10.5-3.9.4
+    container_name: "${APP_NAME}_mariadb"
+    stop_grace_period: 30s
+    ports:
+    - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+      MYSQL_DATABASE: $DB_DATABASE
+      MYSQL_USER: $DB_USERNAME
+      MYSQL_PASSWORD: $DB_PASSWORD
+
+  php:
+    image: chialab/php:8.0-fpm
+    container_name: "${APP_NAME}_php"
+    environment:
+#      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
+      DB_HOST: $DB_HOST
+      DB_USER: $DB_USERNAME
+      DB_PASSWORD: $DB_PASSWORD
+      DB_NAME: $DB_DATABASE
+      PHP_FPM_USER: apache
+      PHP_FPM_GROUP: apache
+    volumes:
+    - ./:/var/www/html:cached
+
+  apache:
+    image: wodby/apache:2.4-4.3.5
+    container_name: "${APP_NAME}_apache"
+    depends_on:
+    - php
+    environment:
+      APACHE_LOG_LEVEL: debug
+      APACHE_BACKEND_HOST: php
+      APACHE_VHOST_PRESET: php
+      APACHE_DOCUMENT_ROOT: /var/www/html/public
+    volumes:
+      - ./:/var/www/html:cached
+    labels:
+      - "traefik.http.routers.${APP_NAME}_apache.rule=Host(`${APP_URL}`)"
+
+#  nginx:
+#    image: wodby/nginx:1.19-5.10.7
+#    container_name: "${APP_NAME}_nginx"
+#    depends_on:
+#    - php
+#    - mariadb
+#    environment:
+#      NGINX_STATIC_OPEN_FILE_CACHE: "off"
+#      NGINX_ERROR_LOG_LEVEL: debug
+#      NGINX_BACKEND_HOST: php
+#      NGINX_VHOST_PRESET: php
+#      NGINX_SERVER_ROOT: /var/www/html/public
+#    volumes:
+#    - ./:/var/www/html:cached
+#    labels:
+#    - "traefik.http.routers.${APP_NAME}_nginx.rule=Host(`${APP_URL}`)"
+
+#  mailhog:
+#    image: mailhog/mailhog
+#    container_name: "${APP_NAME}_mailhog"
+#    labels:
+#    - "traefik.http.services.${APP_NAME}_mailhog.loadbalancer.server.port=8025"
+#    - "traefik.http.routers.${APP_NAME}_mailhog.rule=Host(`mailhog.${APP_URL}`)"
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: "${APP_NAME}_pma"
+    environment:
+      PMA_HOST: $DB_HOST
+      PMA_USER: $DB_USERNAME
+      PMA_PASSWORD: $DB_PASSWORD
+      PHP_UPLOAD_MAX_FILESIZE: 1G
+      PHP_MAX_INPUT_VARS: 1G
+    labels:
+      - "traefik.http.routers.${APP_NAME}_pma.rule=Host(`pma.${APP_URL}`)"
+
+  traefik:
+    image: traefik:v2.0
+    container_name: "${APP_NAME}_traefik"
+    command: --api.insecure=true --providers.docker
+    ports:
+    - '80:80'
+    - '8080:8080' # Dashboard
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
