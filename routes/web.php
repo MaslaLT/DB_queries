@@ -20,19 +20,19 @@ Route::get('/', function () {
 /**
  * First lesson simple mysql and sqlite db queries to get before seeded users.
  */
-Route::get('/1', [\App\Http\Controllers\LessonController::class, 'firstLesson']);
+Route::get('/intro/1', [\App\Http\Controllers\IntroLessonController::class, 'firstLesson']);
 
 /**
  * Second lesson simple pdo, query builder and eloquent ORM queries examples
  */
-Route::get('/2', [\App\Http\Controllers\LessonController::class, 'secondLesson']);
+Route::get('/intro/2', [\App\Http\Controllers\IntroLessonController::class, 'secondLesson']);
 
 /**
  * DB transactions and events
  */
-Route::get('/3', [\App\Http\Controllers\LessonController::class, 'thirdLesson']);
+Route::get('/intro/3', [\App\Http\Controllers\IntroLessonController::class, 'thirdLesson']);
 
 /**
  * DB transactions and events
  */
-Route::get('/4', [\App\Http\Controllers\LessonController::class, 'fourthLesson']);
+Route::get('/intro/4', [\App\Http\Controllers\IntroLessonController::class, 'fourthLesson']);

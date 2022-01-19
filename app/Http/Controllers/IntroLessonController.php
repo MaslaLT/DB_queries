@@ -6,7 +6,7 @@ use App\Models\Comments;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-class LessonController extends Controller
+class IntroLessonController extends Controller
 {
     public function firstLesson()
     {
