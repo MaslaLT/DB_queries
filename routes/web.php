@@ -31,3 +31,8 @@ Route::get('/2', [\App\Http\Controllers\LessonController::class, 'secondLesson']
  * DB transactions and events
  */
 Route::get('/3', [\App\Http\Controllers\LessonController::class, 'thirdLesson']);
+
+/**
+ * DB transactions and events
+ */
+Route::get('/4', [\App\Http\Controllers\LessonController::class, 'fourthLesson']);

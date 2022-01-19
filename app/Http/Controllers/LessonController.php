@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comments;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -102,5 +103,15 @@ class LessonController extends Controller
         }
         dump('DB transaction see debug bar');
         DB::delete('delete from users where email = ?', ['testTransaction']);
+    }
+
+    public function fourthLesson()
+    {
+        DB::delete('delete from comments');
+        $comments = Comments::factory()->count(10)->make();
+        foreach ($comments as $comment) {
+            $comment->save();
+        }
+        dump(Comments::all());
     }
 }
