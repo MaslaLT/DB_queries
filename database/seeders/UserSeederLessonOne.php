@@ -15,14 +15,14 @@ class UserSeederLessonOne extends Seeder
     public function run()
     {
         User::factory()
-            ->count(5)
+            ->count(15)
             ->create();
 
-        $connection = 'sqlite';
-
-        User::factory()
-            ->connection($connection)
-            ->count(5)
-            ->create();
+//        $connection = 'sqlite';
+//
+//        User::factory()
+//            ->connection($connection)
+//            ->count(5)
+//            ->create();
     }
 }

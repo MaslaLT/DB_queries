@@ -57,4 +57,14 @@ Route::prefix('q-builder')->group(function () {
      * Advanced Where clause with operators
      */
     Route::get('/2', [\App\Http\Controllers\QueryBuilderController::class, 'secondLesson']);
+
+    /**
+     * Advanced Where clause with operators
+     */
+    Route::get('/3', [\App\Http\Controllers\QueryBuilderController::class, 'thirdLesson']);
+
+    /**
+     * Text search
+     */
+    Route::get('/4', [\App\Http\Controllers\QueryBuilderController::class, 'fourthLesson']);
 });

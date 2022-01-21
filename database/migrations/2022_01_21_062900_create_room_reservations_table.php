@@ -15,6 +15,10 @@ class CreateRoomReservationsTable extends Migration
     {
         Schema::create('room_reservations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('room_id')->constrained();
+            $table->date('check_in');
+            $table->date('check_out');
             $table->timestamps();
         });
     }

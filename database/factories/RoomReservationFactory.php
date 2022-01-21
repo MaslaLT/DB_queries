@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Room;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RoomReservationFactory extends Factory
@@ -13,8 +15,14 @@ class RoomReservationFactory extends Factory
      */
     public function definition()
     {
+        $maxRoomId = Room::all('id')->last();
+        $maxUserId = User::all('id')->last();
+
         return [
-            //
+            'user_id' => $this->faker->numberBetween(1, (int) $maxUserId->id),
+            'room_id' => $this->faker->numberBetween(1, (int) $maxRoomId->id),
+            'check_in' => $this->faker->dateTimeBetween('-10 days', '-1 day'),
+            'check_out' => $this->faker->dateTimeBetween('now', '+5 day'),
         ];
     }
 }

@@ -98,7 +98,7 @@ class QueryBuilderController extends Controller
         dump('Comment don\'t exists? with user id 1', $allUsers);
     }
 
-    public function secondLesson ()
+    public function secondLesson()
     {
         /**
          * Get rooms with price less than 200
@@ -145,5 +145,89 @@ class QueryBuilderController extends Controller
             })
             ->get();
         dump('Rooms where size is 4 or statement in anonymous function', $roomsWhereSizeOrAnonymous);
+    }
+
+    public function thirdLesson()
+    {
+        /**
+         * Get room reservations between id 5 and 10
+         */
+        $roomReservationBeetween = DB::table('room_reservations')
+            ->whereBetween('id', [5,10])
+            ->get();
+        dump('Room reservations between id 5 and 10', $roomReservationBeetween);
+
+        /**
+         * Get room reservations NOT between id 5 and 10
+         */
+        $roomReservationNotBeetween = DB::table('room_reservations')
+            ->whereNotBetween('id', [5,10])
+            ->get();
+        dump('Room reservations NOT between id 5 and 10', $roomReservationNotBeetween);
+
+        /**
+         * Get rooms where not id 2, 3, 5, 10,
+         */
+        $roomsWhereNotIn = DB::table('rooms')
+            ->whereNotIn('id', [2, 3, 5, 10])
+            ->get();
+        dump('rooms where not id 2, 3, 5, 10,', $roomsWhereNotIn);
+
+        /**
+         * Get rooms where ids are  2, 3, 5, 10,
+         */
+        $roomsWhereIn = DB::table('rooms')
+            ->whereIn('id', [2, 3, 5, 10])
+            ->get();
+        dump('rooms where ids are 2, 3, 5, 10,', $roomsWhereIn);
+
+        /**
+         * Get all users ids that have reserved room on specific date.
+         */
+        $usersReservedRoomOnDate = DB::table('users')
+            ->whereExists(function($query) {
+                $query->select('id')
+                    ->from('room_reservations')
+                    ->whereRaw('room_reservations.user_id = users.id')
+                    ->where('check_in', '=', '2022-01-15')
+                    ->limit(10);
+            })
+            ->get();
+        dump('Max 10 records of users id reserved room on specific date', $usersReservedRoomOnDate);
+
+        /**
+         * Get users json type meta colum
+         */
+        $userJsonMeta = DB::table('users')
+            ->whereJsonContains('meta->gender', 'male')
+            ->where('meta->settings->site_language', 'lt')
+            ->get();
+        dump('users json meta column', $userJsonMeta);
+    }
+
+    public function fourthLesson()
+    {
+        $comments = DB::table('comments')->get();
+
+        /**
+         * Search full text
+         * For full text search you need to enable column indexing full text.
+         */
+        $searchResult = DB::table('comments')
+            ->whereRaw('MATCH(content) AGAINST(? IN BOOLEAN MODE)', [
+                'Despair'
+            ])
+            ->get();
+
+        dump('all comments',$comments ,'Search in comments content', $searchResult);
+
+        /**
+         * Search full text with like
+         */
+        $searchLikeResult = DB::table('comments')
+            ->where('content', 'like', '%Despair%')
+            ->get();
+
+        dump('search with like', $searchLikeResult);
     }
 }
