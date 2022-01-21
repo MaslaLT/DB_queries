@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Comments;
+use App\Models\Comment;
 use Illuminate\Database\Seeder;
 
 class CommentSeeder extends Seeder
@@ -17,6 +17,6 @@ class CommentSeeder extends Seeder
         /**
          * This seeder won't bee launched. It's just an example.
          */
-        Comments::factory()->count(10)->create();
+        Comment::factory()->count(10)->create();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comments;
+use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -108,10 +108,10 @@ class IntroLessonController extends Controller
     public function fourthLesson()
     {
         DB::delete('delete from comments');
-        $comments = Comments::factory()->count(10)->make();
+        $comments = Comment::factory()->count(10)->make();
         foreach ($comments as $comment) {
             $comment->save();
         }
-        dump(Comments::all());
+        dump(Comment::all());
     }
 }

@@ -17,22 +17,44 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-/**
- * First lesson simple mysql and sqlite db queries to get before seeded users.
- */
-Route::get('/intro/1', [\App\Http\Controllers\IntroLessonController::class, 'firstLesson']);
 
 /**
- * Second lesson simple pdo, query builder and eloquent ORM queries examples
+ * Intro Routes
  */
-Route::get('/intro/2', [\App\Http\Controllers\IntroLessonController::class, 'secondLesson']);
+Route::prefix('intro')->group(function() {
+    /**
+     * First lesson simple mysql and sqlite db queries to get before seeded users.
+     */
+    Route::get('/1', [\App\Http\Controllers\IntroLessonController::class, 'firstLesson']);
+
+    /**
+     * Second lesson simple pdo, query builder and eloquent ORM queries examples
+     */
+    Route::get('/2', [\App\Http\Controllers\IntroLessonController::class, 'secondLesson']);
+
+    /**
+     * DB transactions and events
+     */
+    Route::get('/3', [\App\Http\Controllers\IntroLessonController::class, 'thirdLesson']);
+
+    /**
+     * DB transactions and events
+     */
+    Route::get('/4', [\App\Http\Controllers\IntroLessonController::class, 'fourthLesson']);
+});
 
 /**
- * DB transactions and events
+ * Query builder routes
  */
-Route::get('/intro/3', [\App\Http\Controllers\IntroLessonController::class, 'thirdLesson']);
+Route::prefix('q-builder')->group(function () {
+    /**
+     * Getting data.
+     * Simple select, where clauses and aggregate functions.
+     */
+    Route::get('/1', [\App\Http\Controllers\QueryBuilderController::class, 'firstLesson']);
 
-/**
- * DB transactions and events
- */
-Route::get('/intro/4', [\App\Http\Controllers\IntroLessonController::class, 'fourthLesson']);
+    /**
+     * Advanced Where clause with operators
+     */
+    Route::get('/2', [\App\Http\Controllers\QueryBuilderController::class, 'secondLesson']);
+});
