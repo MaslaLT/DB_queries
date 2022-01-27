@@ -212,6 +212,7 @@ class QueryBuilderController extends Controller
         /**
          * Search full text
          * For full text search you need to enable column indexing full text.
+         * Very fast sql search
          */
         $searchResult = DB::table('comments')
             ->whereRaw('MATCH(content) AGAINST(? IN BOOLEAN MODE)', [
@@ -223,11 +224,39 @@ class QueryBuilderController extends Controller
 
         /**
          * Search full text with like
+         * Simple much slower search.
          */
         $searchLikeResult = DB::table('comments')
             ->where('content', 'like', '%Despair%')
             ->get();
 
         dump('search with like', $searchLikeResult);
+
+        /**
+         * Rooms paginated 5 per page
+         * Simple paginate won't check all records count only returns next before buttons for paginate.
+         */
+        $roomsPaginated = DB::table('rooms')
+            ->paginate('5');
+        dump('Rooms paginated 5 per page', $roomsPaginated);
+
+        /**
+         * Row expressions. Used for laravel unsupported specific sql queries.
+         */
+        $roomsRowCount = DB::table('rooms')
+            ->select(DB::raw('count(rooms.id) as number_of_rooms'))
+            ->get();
+        dump('Count rooms', $roomsRowCount);
+
+        /**
+         * Row expressions. Used for laravel unsupported specific sql queries.
+         */
+        $userCommentsRowCount = DB::table('comments')
+            ->selectRaw('count(user_id) as number_of_comments')
+            ->join('users', 'users.id', '=', 'comments.user_id')
+            ->groupBy('user_id')
+            ->get();
+        dump('Count user comments', $userCommentsRowCount);
+
     }
 }

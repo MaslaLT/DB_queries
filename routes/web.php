@@ -65,6 +65,8 @@ Route::prefix('q-builder')->group(function () {
 
     /**
      * Text search
+     * Pagination
+     * Row sql expression
      */
     Route::get('/4', [\App\Http\Controllers\QueryBuilderController::class, 'fourthLesson']);
 });
