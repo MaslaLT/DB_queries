@@ -257,6 +257,117 @@ class QueryBuilderController extends Controller
             ->groupBy('user_id')
             ->get();
         dump('Count user comments', $userCommentsRowCount);
+    }
 
+    public function fifthLesson()
+    {
+        /**
+         * Using orderBy
+         */
+        $usersOrderedBy = DB::table('users')
+            ->orderBy('name', 'desc')
+            ->get();
+        dump('Users ordered by name desc', $usersOrderedBy);
+
+
+        /**
+         * Using latest and first
+         */
+        $userLatest = DB::table('users')
+            ->latest('id')//default 'updated_at'
+            ->first();
+        dump('User latest', $userLatest);
+
+        /**
+         * Using in random order
+         */
+        $usersRandomOrder = DB::table('users')
+            ->inRandomOrder('id')
+            ->get();
+        dump('User latest', $usersRandomOrder);
+
+        /**
+         * Row select from comments grouping by rating and showing only 5 rating caomments
+         */
+        $fiveRatedComments = DB::table('comments')
+            ->selectRaw('count(id) as number_of_5_rated_comments, rating')
+            ->groupBy('rating')
+            ->having('rating', '=', 5)
+            ->get();
+        dump('5 rated comments grouped by rating', $fiveRatedComments);
+
+        /**
+         * Skip and take
+         */
+        $fiveCommentsAfterSkippingFive = DB::table('comments')
+            ->skip(5)
+            ->take(5)
+            ->get();
+        dump('5 Comments after 5 skiped', $fiveCommentsAfterSkippingFive);
+
+        /**
+         * when conditional clause. If parameter null its ignored if some number then will work.
+         */
+        //$roomId = null;
+        $roomId = 5;
+
+        $roomById = DB::table('room_reservations')
+            ->when($roomId, function($query, $roomId) { //if $roomId is null when anonymous function is not running.
+                return $query->where('room_id', $roomId);
+            })
+            ->get();
+        dump('Rooms where id equals to x', $roomById);
+
+        /**
+         * when conditional clause.
+         * If sort is null when order by price if sort not null sort by variable $sortBy value
+         * and joined two tables.
+         */
+        $sortBy = null;
+
+        $roomSort = DB::table('rooms')
+            ->when($sortBy, function($query, $sortBy) {
+                return $query->orderBy('room_id');
+            }, function($query) {
+                return $query->orderBy('price');
+            })
+            ->join('room_reservations', 'rooms.id', '=', 'room_reservations.id')
+            ->get();
+        dump('Rooms sort', $roomSort);
+
+        /**
+         * get all and chunk.
+         * Chunk best to use then you have huge amount of data and you out of ram.
+         */
+        $commentsChunked = DB::table('comments')
+            ->orderBy('id')
+            ->chunk(10, function($comments){
+                foreach ($comments as $comment) {
+                    if($comment->id == 11) return false;
+                }
+            });
+        dump('Chunked comments', $commentsChunked);
+
+        /**
+         * Get all. Then chunk and update all records.
+         * Chunk best to use then you have huge amount of data and you out of ram.
+         */
+        $commentsChunkedUpdate = DB::table('comments')
+            ->orderBy('id')
+            ->chunkById(10, function($comments){
+                foreach ($comments as $comment) {
+                   DB::table('comments')
+                       ->where('id', $comment->id)
+                       ->update(['rating' => $comment->rating]);
+                }
+            });
+        dump('Chunked comments update all', $commentsChunkedUpdate);
+    }
+
+    public function sixthLesson()
+    {
+       /**
+        * joining
+        */
     }
 }

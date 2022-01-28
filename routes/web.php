@@ -69,4 +69,14 @@ Route::prefix('q-builder')->group(function () {
      * Row sql expression
      */
     Route::get('/4', [\App\Http\Controllers\QueryBuilderController::class, 'fourthLesson']);
+
+    /**
+     * Order group limit offset conditionals and chunks
+     */
+    Route::get('/5', [\App\Http\Controllers\QueryBuilderController::class, 'fifthLesson']);
+
+    /**
+     * Simple and advanced joins, union, insert, update, delete.
+     */
+    Route::get('/6', [\App\Http\Controllers\QueryBuilderController::class, 'sixthLesson']);
 });
