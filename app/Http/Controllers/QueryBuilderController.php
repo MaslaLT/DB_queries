@@ -410,7 +410,7 @@ class QueryBuilderController extends Controller
 
         /**
          * Left join returns all rooms
-         * at counts all rooms. Even without any reservation...
+         * and counts all rooms. Even without any reservation...
          */
         $allRoomsJoinedWithReservations = DB::table('rooms')
             ->leftJoin('room_reservations','rooms.id', '=', 'room_reservations.room_id')
@@ -422,7 +422,7 @@ class QueryBuilderController extends Controller
 
         /**
          * Left join returns all rooms
-         * at counts all rooms. Even without any reservation...
+         * And counts all rooms. Even without any reservation...
          * Added one more group column
          */
         $allRoomsJoinedWithReservationsBySizeAndPrice = DB::table('rooms')
@@ -435,7 +435,7 @@ class QueryBuilderController extends Controller
 
         /**
          * Left join returns all rooms
-         * at counts all rooms. Even without any reservation...
+         * And counts all rooms. Even without any reservation...
          * Added one more group column and add city table to join
          */
         $allRoomsJoinedWithReservationsBySizeAndPrice = DB::table('rooms')
@@ -446,5 +446,66 @@ class QueryBuilderController extends Controller
             ->orderByRaw('count(room_reservations.id) DESC')
             ->get();
         dump('Left join reservation with all rooms group by size and price', $allRoomsJoinedWithReservationsBySizeAndPrice);
+
+        /**
+         * Cross join returns all rooms
+         * And counts all rooms. Even without any reservation...
+         * Added one more group column and add city table to join
+         */
+        $allRoomsJoinedWithReservationsBySizeAndPrice = DB::table('rooms')
+            ->crossJoin('cities')
+            ->leftJoin('room_reservations', function($join) {
+                $join->on('rooms.id', '=', 'room_reservations.room_id')
+                    ->on('cities.id', '=', 'room_reservations.city_id');
+            })
+            ->selectRaw('count(room_reservations.id) as reservations_count, rooms.price as room_price, size, cities.name')
+            ->groupBy('size' , 'room_price', 'cities.name')
+            ->orderByRaw('rooms.size DESC')
+            ->get();
+        dump('Cross join reservation with all rooms group by size and price', $allRoomsJoinedWithReservationsBySizeAndPrice);
+
+        /**
+         * Union combines two tables vertically.
+         * Adds one table records to another.
+         */
+        $users = DB::table('users')
+            ->select('name');
+
+        $usersAndCityUnion = DB::table('cities')
+            ->select('name')
+            ->union($users)
+            ->get();
+        dump('union users and cities', $usersAndCityUnion);
+
+        /**
+         * Query builder Insert
+         */
+        $insertRoom = DB::table('rooms')
+            ->insert([
+                'number' => 1,
+                'size' => 3,
+                'price' => 299,
+                'description' => 'Testing Insert'
+                ]);
+        dump('Inserting new room', $insertRoom);
+
+        /**
+         * Query builder Update
+         */
+        $updateRoom = DB::table('rooms')
+            ->where('description', '=', 'Testing Insert')
+            ->update([
+                'price' => 69,
+            ]);
+        dump('Update price to 69', $updateRoom);
+
+        /**
+         * Query builder Delete
+         */
+        $deleteRoom = DB::table('rooms')
+            ->where('description', '=', 'Testing Insert')
+            ->delete();
+        dump('Delete last record', $deleteRoom);
+
     }
 }

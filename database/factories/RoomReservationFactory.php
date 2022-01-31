@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\City;
 use App\Models\Room;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,7 +18,7 @@ class RoomReservationFactory extends Factory
     {
         $maxRoomId = Room::all('id')->last();
         $maxUserId = User::all('id')->last();
-        $maxCityId = User::all('id')->last();
+        $maxCityId = City::all('id')->last();
 
         return [
             'user_id' => $this->faker->numberBetween(1, (int) $maxUserId->id),

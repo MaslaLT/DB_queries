@@ -80,3 +80,12 @@ Route::prefix('q-builder')->group(function () {
      */
     Route::get('/6', [\App\Http\Controllers\QueryBuilderController::class, 'sixthLesson']);
 });
+
+
+/**
+ * Eloquent routes
+ */
+Route::prefix('eloquent')->group(function () {
+
+    Route::get('/1', [\App\Http\Controllers\EloquentController::class, 'firstLesson']);
+});
