@@ -367,7 +367,84 @@ class QueryBuilderController extends Controller
     public function sixthLesson()
     {
        /**
-        * joining
+        * joining room_reservations with rooms and users.
+        * where room id less or equal for 2.
         */
+       $reservationsWithRoomsAndUsers = DB::table('room_reservations')
+           ->join('rooms as r', 'room_reservations.room_id', '=', 'r.id')
+           ->join('users', 'room_reservations.user_id', '=', 'users.id')
+           ->where('room_id', '<=', 2)
+           ->get();
+       dump('reservations joined with room and user where room id is less or equal 2', $reservationsWithRoomsAndUsers);
+
+        /**
+         * Same as above but more readable.
+         */
+        $reservationsWithRoomsAndUsers = DB::table('room_reservations')
+            ->join('rooms', function($join) {
+                $join->on('room_reservations.room_id', '=', 'rooms.id')
+                ->where('room_id', '<=', 2);
+            })
+            ->join('users', function($join) {
+                $join->on('room_reservations.user_id', '=', 'users.id');
+            })
+            ->get();
+        dump('same as above', $reservationsWithRoomsAndUsers);
+
+        /**
+         * Same as above but using join sub queries.
+         */
+        $rooms = DB::table('rooms')
+            ->where('id', '<=', 2);
+        $users = DB::table('users');
+
+        $reservationsWithRoomsAndUsers = DB::table('room_reservations')
+            ->joinSub($rooms, 'rooms', function ($join) {
+                $join->on('room_reservations.room_id', '=', 'rooms.id');
+            })
+            ->joinSub($users, 'users', function ($join) {
+                $join->on('room_reservations.user_id', '=', 'users.id');
+            })
+            ->get();
+        dump('same as above using sub join', $reservationsWithRoomsAndUsers);
+
+        /**
+         * Left join returns all rooms
+         * at counts all rooms. Even without any reservation...
+         */
+        $allRoomsJoinedWithReservations = DB::table('rooms')
+            ->leftJoin('room_reservations','rooms.id', '=', 'room_reservations.room_id')
+            ->selectRaw('size, count(room_reservations.id) as reservations_count')
+            ->groupBy('size')
+            ->orderByRaw('count(room_reservations.id) DESC')
+            ->get();
+        dump('Left join reservation with all rooms', $allRoomsJoinedWithReservations);
+
+        /**
+         * Left join returns all rooms
+         * at counts all rooms. Even without any reservation...
+         * Added one more group column
+         */
+        $allRoomsJoinedWithReservationsBySizeAndPrice = DB::table('rooms')
+            ->leftJoin('room_reservations','rooms.id', '=', 'room_reservations.room_id')
+            ->selectRaw('size, price, count(room_reservations.id) as reservations_count')
+            ->groupBy('size', 'price')
+            ->orderByRaw('count(room_reservations.id) DESC')
+            ->get();
+        dump('Left join reservation with all rooms group by size and price', $allRoomsJoinedWithReservationsBySizeAndPrice);
+
+        /**
+         * Left join returns all rooms
+         * at counts all rooms. Even without any reservation...
+         * Added one more group column and add city table to join
+         */
+        $allRoomsJoinedWithReservationsBySizeAndPrice = DB::table('rooms')
+            ->leftJoin('room_reservations','rooms.id', '=', 'room_reservations.room_id')
+            ->leftJoin('cities','room_reservations.city_id', '=', 'cities.id')
+            ->selectRaw('size, price, cities.name as city_name, count(room_reservations.id) as reservations_count')
+            ->groupBy('size', 'price', 'cities.name')
+            ->orderByRaw('count(room_reservations.id) DESC')
+            ->get();
+        dump('Left join reservation with all rooms group by size and price', $allRoomsJoinedWithReservationsBySizeAndPrice);
     }
 }
