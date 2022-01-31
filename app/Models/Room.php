@@ -9,6 +9,11 @@ class Room extends Model
 {
     use HasFactory;
 
+//    protected $table = 'my_rooms';
+//    protected $primaryKey = 'room_id';
+//    public $timestamps = 'false';
+//    protected $connection = 'sqlite';
+
     protected $fillable = [
         'number',
         'size',
