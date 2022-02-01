@@ -100,7 +100,14 @@ Route::prefix('eloquent')->group(function () {
     Route::get('/3', [\App\Http\Controllers\EloquentController::class, 'thirdLesson']);
 
     /**
-     * One to One relationship eloquent
+     * One to One relationship eloquent hasOne belongsTo
+     * One to Many relationship eloquent hasMany belongsTo
      */
     Route::get('/4', [\App\Http\Controllers\EloquentController::class, 'fourthLesson']);
+
+    /**
+     * Many-To-Many relationship eloquent belongsToMany - BelongsToMany
+     * Has one through relationship eloquent
+     */
+    Route::get('/5', [\App\Http\Controllers\EloquentController::class, 'fifthLesson']);
 });

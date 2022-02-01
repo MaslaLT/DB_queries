@@ -30,4 +30,15 @@ class Comment extends Model
     {
         return $query->where('rating', '>', $value);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function userCountry()
+    {
+        return $this->hasOneThrough(Address::class, User::class, 'id', 'user_id', 'user_id', 'id')
+            ->select('country as name');
+    }
 }

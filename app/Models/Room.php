@@ -20,4 +20,9 @@ class Room extends Model
         'price',
         'description',
     ];
+
+    public function cities()
+    {
+        return $this->belongsToMany(City::class);
+    }
 }

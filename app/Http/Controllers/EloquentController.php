@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
+use App\Models\City;
 use App\Models\Comment;
 use App\Models\Room;
 use App\Models\RoomReservation;
@@ -224,6 +226,53 @@ class EloquentController extends Controller
 
     public function fourthLesson()
     {
-        dump('4');
+        /**
+         * get user and dump address with number.
+         */
+        $userOne = User::find(1);
+        dump('Users adress and number', $userOne->address->street, $userOne->address->number);
+
+        /**
+         * get address and print users name.
+         */
+        $addresOne = Address::find(1);
+        dump('Print user from adress', $addresOne->user->name);
+
+        /**
+         * get users comments
+         */
+        $allUsersComments = $userOne->comments;
+        dump('All users comments', $allUsersComments);
+
+        /**
+         * Get user from comment
+         */
+        $commentOne = Comment::find(1);
+        dump('user from comment', $commentOne->user);
+    }
+
+    public function fifthLesson()
+    {
+        /**
+         * Get all rooms of city
+         */
+        $city = City::find(3);
+        $cityRooms = $city->rooms;
+        dump('All rooms of city 3', $cityRooms);
+        dump('Pivot created_at', $cityRooms[1]->pivot->created_at);
+
+        /**
+         * Get cities of room
+         */
+        $room = Room::find(3);
+        $roomCities = $room->cities;
+        dump('All cities of rooms 3', $roomCities);
+
+        /**
+         * get Users country from address through comment
+         */
+        $comment = Comment::find(1);
+        $usersCountry = $comment->userCountry;
+        dump('Users country from comment', $usersCountry->name);
     }
 }

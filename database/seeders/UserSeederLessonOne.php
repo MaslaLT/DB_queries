@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Address;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 
@@ -16,7 +17,10 @@ class UserSeederLessonOne extends Seeder
     {
         User::factory()
             ->count(15)
-            ->create();
+            ->create()
+        ->each(function ($user) {
+            $user->address()->save(Address::factory()->make());
+        });
 
 //        $connection = 'sqlite';
 //
