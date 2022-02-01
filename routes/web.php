@@ -88,4 +88,19 @@ Route::prefix('q-builder')->group(function () {
 Route::prefix('eloquent')->group(function () {
 
     Route::get('/1', [\App\Http\Controllers\EloquentController::class, 'firstLesson']);
+
+    /**
+     * Collection and additional operations
+     */
+    Route::get('/2', [\App\Http\Controllers\EloquentController::class, 'secondLesson']);
+
+    /**
+     * Insert delete update data using eloquent
+     */
+    Route::get('/3', [\App\Http\Controllers\EloquentController::class, 'thirdLesson']);
+
+    /**
+     * One to One relationship eloquent
+     */
+    Route::get('/4', [\App\Http\Controllers\EloquentController::class, 'fourthLesson']);
 });
