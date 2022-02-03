@@ -52,4 +52,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function likedImages()
+    {
+        return $this->morphedByMany(Image::class, 'likeable');
+    }
+
+    public function likedRooms()
+    {
+        return $this->morphedByMany(Room::class, 'likeable');
+    }
+
+    public function roomReservations()
+    {
+        return $this->hasMany(RoomReservation::class);
+    }
 }

@@ -108,6 +108,18 @@ Route::prefix('eloquent')->group(function () {
     /**
      * Many-To-Many relationship eloquent belongsToMany - BelongsToMany
      * Has one through relationship eloquent
+     * Has many through relationship
      */
     Route::get('/5', [\App\Http\Controllers\EloquentController::class, 'fifthLesson']);
+
+    /**
+     * Polymorphic database relationship
+     * One to one poly relationship morphOne morphsTo
+     */
+    Route::get('/6', [\App\Http\Controllers\EloquentController::class, 'sixthLesson']);
+
+    /**
+     * Querying and counting relationships
+     */
+    Route::get('/7',[\App\Http\Controllers\EloquentController::class, 'seventhLesson']);
 });

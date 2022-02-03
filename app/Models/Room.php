@@ -25,4 +25,9 @@ class Room extends Model
     {
         return $this->belongsToMany(City::class);
     }
+
+    public function likes()
+    {
+        return $this->morphToMany(User::class, 'likeable');
+    }
 }

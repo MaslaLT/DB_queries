@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\City;
+use App\Models\Image;
 use Illuminate\Database\Seeder;
 
-class CitySeeder extends Seeder
+class ImageSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +14,6 @@ class CitySeeder extends Seeder
      */
     public function run()
     {
-        City::factory()->count(10)->create();
+        Image::factory()->count(15)->create();
     }
 }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Address;
 use App\Models\City;
 use App\Models\Comment;
+use App\Models\Company;
+use App\Models\Image;
 use App\Models\Room;
 use App\Models\RoomReservation;
 use App\Models\User;
@@ -274,5 +276,145 @@ class EloquentController extends Controller
         $comment = Comment::find(1);
         $usersCountry = $comment->userCountry;
         dump('Users country from comment', $usersCountry->name);
+
+        /**
+         * get reservation from company through user
+         */
+        $company = Company::find(5);
+        $reservationsFromCompany = $company->reservations;
+        dump('Reservations from company thrugh user', $reservationsFromCompany);
+    }
+
+    public function sixthLesson()
+    {
+        /**
+         * get users image polymorphic
+         */
+        $user = User::find(10);
+        $usersImage = $user->image;
+        dump('users image polimorfic', $usersImage);
+
+        /**
+         * get user from image
+         */
+        $image = Image::find(1);
+        $imageable = $image->imageable;
+        dump('Image from user', $imageable);
+
+        /**
+         * get many user images
+         */
+        $usersImages = $user->images;
+        dump('many user images', $usersImages);
+
+        /**
+         * Users liked images
+         */
+        $userLikedImages = $user->likedImages;
+        dump('Users liked images', $userLikedImages);
+
+        /**
+         * Users liked rooms
+         */
+        $userLikedRooms = $user->likedRooms;
+        dump('Users liked rooms', $userLikedRooms);
+
+        /**
+         * All room likes.
+         */
+        $room = Room::find(9);
+        $roomLikes = $room->likes;
+        dump('All room likes', $roomLikes);
+    }
+
+    public function seventhLesson()
+    {
+        $user = User::find(1);
+        $userComments = $user->comments()
+        ->where('rating', '>', 3)
+        ->get();
+
+        dump('All user comments where rating is > 3', $userComments);
+
+        $userComments = $user->comments()
+            ->where(function($query) {
+                return $query->where('rating', '>', 3)
+                    ->orWhere('rating', '<', 2);
+            })
+            ->get();
+        dump('Comments with or where', $userComments);
+
+        $userHasAddress = Comment::has('user.address')->get();
+        dump('User has address', $userHasAddress);
+
+        /**
+         * Get all users what have comments
+         * can specify count of comments.
+         */
+        $allUsersThatHasComments = User::has('comments')->get();
+        dump('all user with has comments', $allUsersThatHasComments);
+
+        /**
+         * Get all users where has comments and comment rating is > 4 and has more when 1 comments
+         * can specify count of comments.
+         */
+        $allUsersThatHasComments = User::whereHas('comments', function($query) {
+                                        $query->where('rating', '>', 4);
+        }, '>', 1)->get();
+        dump('Get all users where has comments and comment rating is > 4', $allUsersThatHasComments);
+
+        /**
+         * Get all users with comments counted (relationship)
+         */
+        $userWithCommentsCounted = User::withCount('comments', 'address', 'roomReservations')->get();
+        dump('All users with comment count', $userWithCommentsCounted);
+
+        /**
+         * Get all users with negative comments
+         */
+        $userWithNegativeComments = User::withCount([
+            'comments',
+            'comments as negative_comments' => function($query) {
+                $query->where('rating', '<=', 2);
+            }
+        ])->get();
+        dump('User with comments and with negative comments', $userWithNegativeComments);
+
+        /**
+         * Get all images where has USER and CITY imageables
+         */
+        $imagesWhereHas = Image::whereHasMorph( 'imageable',[
+            User::class,
+            City::class,
+        ])->get();
+        dump('Imageables', $imagesWhereHas);
+
+        /**
+         * Get all images where has USER and CITY imageables
+         * and where user company id is more then 2
+         */
+        $imageUsersAndRoomsWhere = Image::whereHasMorph( 'imageable',
+            [User::class, City::class,], function($query, $type) {
+                if($type === User::class) {
+                    $query->where('company_id', '>', 3);
+                }
+            }
+        )->get();
+        dump('Imageables', $imageUsersAndRoomsWhere);
+
+        /**
+         * Get users and city from image imageables
+         */
+        $usersAndCityFromImage = Image::with('imageable')->find(3);
+        dump('Images with imageables', $usersAndCityFromImage);
+
+        /**
+         * Get users and city from image imageables and count
+         */
+        $usersAndCityFromImageCount = Image::find(4)->loadMorphCount('imageable', [
+            User::class => ['comments as User_comments'],
+            City::class => ['images as city_images'],
+        ]);
+        dump('Images with imageables count', $usersAndCityFromImageCount);
     }
 }
