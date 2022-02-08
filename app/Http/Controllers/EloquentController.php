@@ -417,4 +417,65 @@ class EloquentController extends Controller
         ]);
         dump('Images with imageables count', $usersAndCityFromImageCount);
     }
+
+    public function eighthLesson()
+    {
+        /**
+         * Insert new address
+         * Better to use Create method...
+         */
+        $user = User::find(1);
+        $newAddress = $user->address()->savemany([
+            new Address([
+                'number' => 69,
+                'street' => 'New street',
+                'country' => 'VSAT',
+            ])
+        ]);
+        $newAddress = $user->address()->createMany([
+           [
+                'number' => 69,
+                'street' => 'New street',
+                'country' => 'VSAT',
+            ]
+        ]);
+        dump('user relationship address created', $newAddress);
+
+        /**
+         * Delete user related address
+         */
+        $deleteAddress = $user->address()->delete();
+        dump('User address deleted', $deleteAddress);
+
+        /**
+         * Belongs to relationship associate to his parent object
+         * Can dissociate.
+         */
+        $secondUser = User::find(2);
+        $addressForUser = Address::create([
+            'user_id' => 2,
+            'number' => 56,
+            'street' => 'testers st.',
+            'country' => 'Vsatas'
+        ]);
+        $address = Address::all()->where('street', '=', 'testers st.')->first();
+        $addressAssociated = $address->user()->associate($secondUser);
+        dump('Added new addres for user', $addressAssociated);
+
+        /**
+         * Adding relationship for many to many using method attach.
+         * Attach will add new record.
+         */
+        $room = Room::find(2);
+        $room->cities()->attach(2);
+        dump('Attack city to room. Many to many add');
+
+        /**
+         * Adding relationship for many to many using method sync.
+         * Sync will delete all relations and only ad new ones.
+         */
+        $room = Room::find(2);
+        $room->cities()->sync([1,2,3]);
+        dump('Attach city to room. Many to many add');
+    }
 }

@@ -122,4 +122,9 @@ Route::prefix('eloquent')->group(function () {
      * Querying and counting relationships
      */
     Route::get('/7',[\App\Http\Controllers\EloquentController::class, 'seventhLesson']);
+
+    /**
+     * Insert update delete relationships
+     */
+    Route::get('/8',[\App\Http\Controllers\EloquentController::class, 'eighthLesson']);
 });
